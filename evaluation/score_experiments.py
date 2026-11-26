@@ -65,7 +65,7 @@ ENERGY_MODELS = {
     "energy_exp_energy_mlp_raw": True,
     "energy_exp_energy_mlp": False,
     "energy_exp_energy_residual": False,
-    "energy_res": ,
+    "energy_res": False,
 }
 
 ENERGY_POOLING = {
