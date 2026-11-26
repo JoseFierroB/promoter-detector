@@ -1,4 +1,4 @@
-"""Direct Linear Energy Fusion ([B, H] + [B, 80] -> Linear(H + 80, 2))."""
+"""Direct w2-only energy fusion ([B, H] + [B, 80] -> Linear(H + 80, 2))."""
 import argparse
 from pathlib import Path
 import types
