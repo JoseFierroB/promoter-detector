@@ -8,8 +8,11 @@ from sklearn.metrics import roc_auc_score
 import common
 
 out = common.ROOT / "results/B_pneumo"
-entries = [(f"task{t}", common.read_scores(f"task{t}", "pneumo_test")) for t in (1, 2)]
-seeds = [(f"task{t}", m, common.read_scores(m, "pneumo_test")) for t in (1, 2) for m in common.seed_models(f"task{t}")]
+LABELS = {"task1": "Replica", "task2": "Replica+pneumo"}
+entries = ([("Published-2025", common.read_scores("published-2025", "pneumo_test"))] +
+            [("Published-2024", common.read_scores("published-2024", "pneumo_test"))] +
+            [(LABELS[f"task{t}"], common.read_scores(f"task{t}", "pneumo_test")) for t in (1, 2)])
+seeds = [(LABELS[f"task{t}"], m, common.read_scores(m, "pneumo_test")) for t in (1, 2) for m in common.seed_models(f"task{t}")]
 common.compare(out, "B: our test (10% of D39V/TIGR4)", entries, seeds)
 
 rows = []
@@ -24,6 +27,6 @@ common.write_tsv(rows, out / "by_sigma.tsv")
 print(pd.DataFrame(rows).to_string(index=False))
 
 train = common.read_scores("task2", "train_task2")
-common.generalisation(out, "task2", [("train (all)", train), ("train (our data)", train[train.origin == "pneumo"]),
+common.generalisation(out, "task2", [(LABELS["task2"], train), (f"{LABELS['task2']} (our data)", train[train.origin == "pneumo"]),
                                      ("our test", entries[1][1])],
-                      gof_pairs=[("train (our data)", "our test")])  # like for like: our sequences only
+                      gof_pairs=[(f"{LABELS['task2']} (our data)", "our test")])  # like for like: our sequences only

@@ -21,10 +21,12 @@ import common
 
 # Training run -> (test sets its comparisons use, its own training set for the gap plot).
 RUNS = {"task1": (["multispecies", "sigma70", "pneumo_test"], "train_task1"),
-        "task2": (["pneumo_test"], "train_task2"),
+        "task2": (["multispecies", "sigma70", "pneumo_test"], "train_task2"),
         "task3": (["task3_test", "sigma70"], "train_task3"),
-        "task3_authors": (["task3_test", "sigma70"], "train_task3")}
-PUBLISHED = {"published-2025": ["multispecies", "sigma70"], "published-2024": ["multispecies", "sigma70"]}
+        "task3_authors": (["task3_test", "sigma70"], "train_task3"),
+        "task3_split_task1": (["multispecies", "sigma70", "pneumo_test"], "train_task1")}
+PUBLISHED = {"published-2025": ["multispecies", "sigma70", "pneumo_test"], "published-2024": ["multispecies", "sigma70", "pneumo_test"]}
+
 
 
 def models(): # An iterator... I think? yield was for iterators, right?
