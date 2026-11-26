@@ -15,6 +15,8 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 45])
 parser.add_argument("--output-dir", default="outputs/task3")
 parser.add_argument("--max-steps", type=int, default=-1, help="smoke tests only")
+parser.add_argument("--dropout", type=float, default=0.1,
+                    help="dropout (default: pretrained config)")
 launch.add_args(parser)
 args = parser.parse_args()
 out_dir = Path(args.output_dir)
@@ -25,7 +27,7 @@ from scipy.special import softmax
 from sklearn.metrics import roc_auc_score
 from transformers import (AutoModelForSequenceClassification, EarlyStoppingCallback, Trainer,
                           TrainingArguments, set_seed)
-
+    
 import common
 
 # ==================================
@@ -61,9 +63,18 @@ for seed in args.seeds:
     seed_dir = out_dir / f"seed_{seed}"
     set_seed(seed)
     
-    # The model is the same
-    model = AutoModelForSequenceClassification.from_pretrained(common.BASE, revision=common.BASE_REV,
-                                                               trust_remote_code=True)
+    # The model is the same; --dropout overrides the pretrained config at load time
+    if args.dropout is None:
+        model = AutoModelForSequenceClassification.from_pretrained(
+            common.BASE, revision=common.BASE_REV, trust_remote_code=True)
+    else:
+        from transformers import AutoConfig
+        cfg = AutoConfig.from_pretrained(common.BASE, revision=common.BASE_REV, trust_remote_code=True)
+        cfg.classification_dropout_rate = args.dropout
+        cfg.hidden_dropout_prob = args.dropout
+        cfg.attention_probs_dropout_prob = args.dropout
+        model = AutoModelForSequenceClassification.from_pretrained(
+            common.BASE, config=cfg, revision=common.BASE_REV, trust_remote_code=True)
     # ...but we change things!
     training_args = TrainingArguments(
         output_dir=str(seed_dir / "checkpoints"),

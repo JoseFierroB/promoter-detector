@@ -124,12 +124,15 @@ def roc_plot(curves, path, title): ## plottingggg roc curves!
     for label, y, s in curves:
         fpr, tpr, _ = roc_curve(y, s)
         ax.plot(fpr, tpr, lw=1.5, label=f"{label} (AUC {roc_auc_score(y, s):.3f})")
-    ax.plot([0, 1], [0, 1], "k--", lw=0.8)
-    ax.set(xlabel="False positive rate", ylabel="True positive rate", title=title)
+    ax.plot([0, 1], [0, 1], "k--", lw=0.8, label="Random Guess (AUC = 0.50)")
+    ax.set_xlabel("False Positive Rate (1 - Specificity)", fontweight="bold")
+    ax.set_ylabel("True Positive Rate (Sensitivity)", fontweight="bold")
+    ax.grid(True, linestyle=":", alpha=0.6)
     ax.legend(fontsize=8, loc="lower right")
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
+    fig.savefig(path.with_suffix(".pdf"))
     plt.close(fig)
 
 
@@ -155,6 +158,8 @@ def calibration_plot(curves, path, title, seed_curves=()):
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
+    fig.savefig(path.with_suffix(".pdf"))
+    fig.savefig(path.with_suffix(".svg"))
     plt.close(fig)
 
 
@@ -178,6 +183,8 @@ def score_histogram(parts, path, title):
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
+    fig.savefig(path.with_suffix(".pdf"))
+    
     plt.close(fig)
 
 
